@@ -1,0 +1,19 @@
+plugins {
+    id 'com.android.application'
+    id 'firestorm-assembler'
+}
+
+android {
+    compileSdkVersion 29
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 29
+    }
+
+    flavorDimensions "environment"
+
+    productFlavors {
+        mock {}
+        prod {}
+    }
+}
