@@ -14,10 +14,10 @@ class FirestormRunnerPlugin : Plugin<Project> {
                 "Please apply Firestorm Runner plugin to the rootProject."
             }
 
-            if (!project.rootProject.hasConfiguredTask<RunAvailableTestsOnFirebaseTestLabTask>()) {
+            if (!project.rootProject.hasConfiguredTask<RunAvailableTestsOnFirebaseTestLab>()) {
                 project.rootProject.tasks.register(
                     "runAvailableTestsOnFirebaseTestLab",
-                    RunAvailableTestsOnFirebaseTestLabTask::class.java
+                    RunAvailableTestsOnFirebaseTestLab::class.java
                 ) { task ->
                     // TODO configure
                 }

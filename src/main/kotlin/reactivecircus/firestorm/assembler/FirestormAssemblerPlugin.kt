@@ -5,6 +5,7 @@ import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.internal.api.TestedVariant
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import reactivecircus.firestorm.FIRESTORM_GROUP
 import reactivecircus.firestorm.appExtension
 import reactivecircus.firestorm.hasAndroidAppPlugin
 import reactivecircus.firestorm.hasAndroidLibraryPlugin
@@ -28,14 +29,14 @@ class FirestormAssemblerPlugin : Plugin<Project> {
                 "Please make sure either the 'com.android.library' or 'com.android.application' plugin is applied before the Firestorm Assembler plugin."
             }
 
-            val registerTaskForBuildVariants: (BaseVariant) -> Unit = { variant ->
+            val registerTaskForBuildVariant: (BaseVariant) -> Unit = { variant ->
                 // only support non-release builds
                 if (!variant.isReleaseBuild) {
                     project.tasks.register(
-                        "assemble${variant.name.toCamelCase()}TestApk", AssembleTestApkTask::class.java
+                        "assemble${variant.name.toCamelCase()}TestApk", AssembleTestApk::class.java
                     ) { task ->
                         // TODO configure
-                        task.group = "firestorm"
+                        task.group = FIRESTORM_GROUP
                         task.description = "Assembles app and test APKs for ${variant.name}."
                         task.dependsOn((variant as TestedVariant).testVariant.assembleProvider)
                     }
@@ -44,10 +45,10 @@ class FirestormAssemblerPlugin : Plugin<Project> {
 
             when {
                 isAndroidAppProject -> project.appExtension.applicationVariants.all { variant ->
-                    registerTaskForBuildVariants(variant)
+                    registerTaskForBuildVariant(variant)
                 }
                 isAndroidLibraryProject -> project.libraryExtension.libraryVariants.all { variant ->
-                    registerTaskForBuildVariants(variant)
+                    registerTaskForBuildVariant(variant)
                 }
             }
         }

@@ -6,6 +6,7 @@ import org.gradle.api.internal.project.DefaultProject
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert
 import org.junit.Test
+import reactivecircus.firestorm.FIRESTORM_GROUP
 import reactivecircus.firestorm.assembler.FirestormAssemblerPlugin
 
 class FirestormRunnerPluginTest {
@@ -21,7 +22,7 @@ class FirestormRunnerPluginTest {
 
         val runAndroidTestsOnFirebaseTestLab = rootProject.tasks.getByName("runAvailableTestsOnFirebaseTestLab")
         assertThat(runAndroidTestsOnFirebaseTestLab.description).isEqualTo("Runs all tests from all available test APKs on Firebase Test Lab.")
-        assertThat(runAndroidTestsOnFirebaseTestLab.group).isEqualTo("firestorm")
+        assertThat(runAndroidTestsOnFirebaseTestLab.group).isEqualTo(FIRESTORM_GROUP)
         // TODO assert properties / configurations
     }
 
