@@ -1,6 +1,7 @@
 package reactivecircus.firestorm.assembler
 
 import com.google.common.truth.Truth.assertThat
+import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -24,7 +25,8 @@ class FirestormAssemblerPluginFunctionalTest {
             "assembleDebugTestApk"
         ) { build() }
 
-        assertThat(result.output).contains("BUILD SUCCESSFUL")
+        assertThat(result.task(":application-no-flavor:assembleDebugTestApk")?.outcome)
+            .isEqualTo(TaskOutcome.SUCCESS)
 
         /** TODO assert task output contains "generated xxx.apk"
         assertThat(result.output).contains(
@@ -45,7 +47,8 @@ class FirestormAssemblerPluginFunctionalTest {
             "assembleMockDebugTestApk"
         ) { build() }
 
-        assertThat(result.output).contains("BUILD SUCCESSFUL")
+        assertThat(result.task(":application-with-flavors:assembleMockDebugTestApk")?.outcome)
+            .isEqualTo(TaskOutcome.SUCCESS)
 
         /** TODO assert task output contains "generated xxx.apk"
         assertThat(result.output).contains(
@@ -68,7 +71,12 @@ class FirestormAssemblerPluginFunctionalTest {
             "assembleMockDebugTestApk", "assembleDebugTestApk"
         ) { build() }
 
-        assertThat(result.output).contains("BUILD SUCCESSFUL")
+        assertThat(result.task(":application-with-flavors:assembleMockDebugTestApk")?.outcome)
+            .isEqualTo(TaskOutcome.SUCCESS)
+        assertThat(result.task(":library-no-flavor-1:assembleDebugTestApk")?.outcome)
+            .isEqualTo(TaskOutcome.SUCCESS)
+        assertThat(result.task(":library-no-flavor-2:assembleDebugTestApk")?.outcome)
+            .isEqualTo(TaskOutcome.SUCCESS)
 
         /** TODO assert task output contains "generated xxx.apk"
         assertThat(result.output).contains(
@@ -90,7 +98,10 @@ class FirestormAssemblerPluginFunctionalTest {
             "assembleDebugTestApk"
         ) { build() }
 
-        assertThat(result.output).contains("BUILD SUCCESSFUL")
+        assertThat(result.task(":library-no-flavor-1:assembleDebugTestApk")?.outcome)
+            .isEqualTo(TaskOutcome.SUCCESS)
+        assertThat(result.task(":library-no-flavor-2:assembleDebugTestApk")?.outcome)
+            .isEqualTo(TaskOutcome.SUCCESS)
 
         /** TODO assert task output contains "generated xxx.apk"
         assertThat(result.output).contains(
@@ -112,7 +123,10 @@ class FirestormAssemblerPluginFunctionalTest {
             "assembleMockDebugTestApk"
         ) { build() }
 
-        assertThat(result.output).contains("BUILD SUCCESSFUL")
+        assertThat(result.task(":library-with-flavors-1:assembleMockDebugTestApk")?.outcome)
+            .isEqualTo(TaskOutcome.SUCCESS)
+        assertThat(result.task(":library-with-flavors-1:assembleMockDebugTestApk")?.outcome)
+            .isEqualTo(TaskOutcome.SUCCESS)
 
         /** TODO assert task output contains "generated xxx.apk"
         assertThat(result.output).contains(

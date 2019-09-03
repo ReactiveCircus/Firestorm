@@ -8,7 +8,7 @@ import org.gradle.api.internal.project.DefaultProject
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert.assertThrows
 import org.junit.Test
-import reactivecircus.firestorm.FIRESTORM_GROUP
+import reactivecircus.firestorm.assembler.incremental.IncrementalAssemblerConfigs
 import reactivecircus.firestorm.createAndroidAppProject
 import reactivecircus.firestorm.createAndroidLibraryProject
 import reactivecircus.firestorm.dependsOnTask
@@ -28,14 +28,18 @@ class FirestormAssemblerPluginTest {
 
         (appProject as DefaultProject).evaluate()
 
-        val assembleDebugTestApk = appProject.tasks.getByName("assembleDebugTestApk")
+        val assembleDebugTestApk = appProject.tasks.getByName("assembleDebugTestApk") as AssembleTestApk
         assertThat(assembleDebugTestApk.description).isEqualTo("Assembles app and test APKs for debug.")
-        assertThat(assembleDebugTestApk.group).isEqualTo(FIRESTORM_GROUP)
+        assertThat(assembleDebugTestApk.group).isEqualTo("firestorm")
+        assertThat(assembleDebugTestApk.dependsOnTask("assembleDebug")).isTrue()
         assertThat(assembleDebugTestApk.dependsOnTask("assembleDebugAndroidTest")).isTrue()
 
         val assembleReleaseTestApk = appProject.tasks.findByName("assembleReleaseTestApk")
         assertThat(assembleReleaseTestApk).isNull()
-        // TODO assert properties / configurations
+
+        assertDefaultTaskConfigs(assembleDebugTestApk)
+        assertThat(assembleDebugTestApk.isAppProject).isTrue()
+        assertThat(assembleDebugTestApk.testVariant.get().name).isEqualTo("debugAndroidTest")
     }
 
     @Test
@@ -47,22 +51,29 @@ class FirestormAssemblerPluginTest {
 
         (appProject as DefaultProject).evaluate()
 
-        val assembleMockDebugTestApk = appProject.tasks.getByName("assembleMockDebugTestApk")
+        val assembleMockDebugTestApk = appProject.tasks.getByName("assembleMockDebugTestApk") as AssembleTestApk
         assertThat(assembleMockDebugTestApk.description).isEqualTo("Assembles app and test APKs for mockDebug.")
-        assertThat(assembleMockDebugTestApk.group).isEqualTo(FIRESTORM_GROUP)
+        assertThat(assembleMockDebugTestApk.group).isEqualTo("firestorm")
+        assertThat(assembleMockDebugTestApk.dependsOnTask("assembleMockDebug")).isTrue()
         assertThat(assembleMockDebugTestApk.dependsOnTask("assembleMockDebugAndroidTest")).isTrue()
+        assertThat(assembleMockDebugTestApk.isAppProject).isTrue()
+        assertThat(assembleMockDebugTestApk.testVariant.get().name).isEqualTo("mockDebugAndroidTest")
+        assertDefaultTaskConfigs(assembleMockDebugTestApk)
 
-        val assembleProdDebugTestApk = appProject.tasks.getByName("assembleProdDebugTestApk")
+        val assembleProdDebugTestApk = appProject.tasks.getByName("assembleProdDebugTestApk") as AssembleTestApk
         assertThat(assembleProdDebugTestApk.description).isEqualTo("Assembles app and test APKs for prodDebug.")
-        assertThat(assembleProdDebugTestApk.group).isEqualTo(FIRESTORM_GROUP)
+        assertThat(assembleProdDebugTestApk.group).isEqualTo("firestorm")
+        assertThat(assembleProdDebugTestApk.dependsOnTask("assembleProdDebug")).isTrue()
         assertThat(assembleProdDebugTestApk.dependsOnTask("assembleProdDebugAndroidTest")).isTrue()
+        assertThat(assembleProdDebugTestApk.isAppProject).isTrue()
+        assertThat(assembleProdDebugTestApk.testVariant.get().name).isEqualTo("prodDebugAndroidTest")
+        assertDefaultTaskConfigs(assembleProdDebugTestApk)
 
         val assembleMockReleaseTestApk = appProject.tasks.findByName("assembleMockReleaseTestApk")
         assertThat(assembleMockReleaseTestApk).isNull()
 
         val assembleProdReleaseTestApk = appProject.tasks.findByName("assembleProdReleaseTestApk")
         assertThat(assembleProdReleaseTestApk).isNull()
-        // TODO assert properties / configurations
     }
 
     @Test
@@ -74,14 +85,17 @@ class FirestormAssemblerPluginTest {
 
         (libraryProject as DefaultProject).evaluate()
 
-        val assembleDebugTestApk = libraryProject.tasks.getByName("assembleDebugTestApk")
+        val assembleDebugTestApk = libraryProject.tasks.getByName("assembleDebugTestApk") as AssembleTestApk
         assertThat(assembleDebugTestApk.description).isEqualTo("Assembles app and test APKs for debug.")
-        assertThat(assembleDebugTestApk.group).isEqualTo(FIRESTORM_GROUP)
+        assertThat(assembleDebugTestApk.group).isEqualTo("firestorm")
+        assertThat(assembleDebugTestApk.dependsOnTask("assembleDebug")).isFalse()
         assertThat(assembleDebugTestApk.dependsOnTask("assembleDebugAndroidTest")).isTrue()
+        assertThat(assembleDebugTestApk.isAppProject).isFalse()
+        assertThat(assembleDebugTestApk.testVariant.get().name).isEqualTo("debugAndroidTest")
+        assertDefaultTaskConfigs(assembleDebugTestApk)
 
         val assembleReleaseTestApk = libraryProject.tasks.findByName("assembleReleaseTestApk")
         assertThat(assembleReleaseTestApk).isNull()
-        // TODO assert properties / configurations
     }
 
     @Test
@@ -93,22 +107,29 @@ class FirestormAssemblerPluginTest {
 
         (libraryProject as DefaultProject).evaluate()
 
-        val assembleMockDebugTestApk = libraryProject.tasks.getByName("assembleMockDebugTestApk")
+        val assembleMockDebugTestApk = libraryProject.tasks.getByName("assembleMockDebugTestApk") as AssembleTestApk
         assertThat(assembleMockDebugTestApk.description).isEqualTo("Assembles app and test APKs for mockDebug.")
-        assertThat(assembleMockDebugTestApk.group).isEqualTo(FIRESTORM_GROUP)
+        assertThat(assembleMockDebugTestApk.group).isEqualTo("firestorm")
+        assertThat(assembleMockDebugTestApk.dependsOnTask("assembleMockDebug")).isFalse()
         assertThat(assembleMockDebugTestApk.dependsOnTask("assembleMockDebugAndroidTest")).isTrue()
+        assertThat(assembleMockDebugTestApk.isAppProject).isFalse()
+        assertThat(assembleMockDebugTestApk.testVariant.get().name).isEqualTo("mockDebugAndroidTest")
+        assertDefaultTaskConfigs(assembleMockDebugTestApk)
 
-        val assembleProdDebugTestApk = libraryProject.tasks.getByName("assembleProdDebugTestApk")
+        val assembleProdDebugTestApk = libraryProject.tasks.getByName("assembleProdDebugTestApk") as AssembleTestApk
         assertThat(assembleProdDebugTestApk.description).isEqualTo("Assembles app and test APKs for prodDebug.")
-        assertThat(assembleProdDebugTestApk.group).isEqualTo(FIRESTORM_GROUP)
+        assertThat(assembleProdDebugTestApk.group).isEqualTo("firestorm")
+        assertThat(assembleProdDebugTestApk.dependsOnTask("assembleProdDebug")).isFalse()
         assertThat(assembleProdDebugTestApk.dependsOnTask("assembleProdDebugAndroidTest")).isTrue()
+        assertThat(assembleProdDebugTestApk.isAppProject).isFalse()
+        assertThat(assembleProdDebugTestApk.testVariant.get().name).isEqualTo("prodDebugAndroidTest")
+        assertDefaultTaskConfigs(assembleProdDebugTestApk)
 
         val assembleMockReleaseTestApk = libraryProject.tasks.findByName("assembleMockReleaseTestApk")
         assertThat(assembleMockReleaseTestApk).isNull()
 
         val assembleProdReleaseTestApk = libraryProject.tasks.findByName("assembleProdReleaseTestApk")
         assertThat(assembleProdReleaseTestApk).isNull()
-        // TODO assert properties / configurations
     }
 
     @Test
@@ -125,15 +146,23 @@ class FirestormAssemblerPluginTest {
         (appProject as DefaultProject).evaluate()
         (libraryProject as DefaultProject).evaluate()
 
-        val assembleMockDebugTestApk = appProject.tasks.getByName("assembleMockDebugTestApk")
+        val assembleMockDebugTestApk = appProject.tasks.getByName("assembleMockDebugTestApk") as AssembleTestApk
         assertThat(assembleMockDebugTestApk.description).isEqualTo("Assembles app and test APKs for mockDebug.")
-        assertThat(assembleMockDebugTestApk.group).isEqualTo(FIRESTORM_GROUP)
+        assertThat(assembleMockDebugTestApk.group).isEqualTo("firestorm")
+        assertThat(assembleMockDebugTestApk.dependsOnTask("assembleMockDebug")).isTrue()
         assertThat(assembleMockDebugTestApk.dependsOnTask("assembleMockDebugAndroidTest")).isTrue()
+        assertThat(assembleMockDebugTestApk.isAppProject).isTrue()
+        assertThat(assembleMockDebugTestApk.testVariant.get().name).isEqualTo("mockDebugAndroidTest")
+        assertDefaultTaskConfigs(assembleMockDebugTestApk)
 
-        val assembleProdDebugTestApk = appProject.tasks.getByName("assembleProdDebugTestApk")
+        val assembleProdDebugTestApk = appProject.tasks.getByName("assembleProdDebugTestApk") as AssembleTestApk
         assertThat(assembleProdDebugTestApk.description).isEqualTo("Assembles app and test APKs for prodDebug.")
-        assertThat(assembleProdDebugTestApk.group).isEqualTo(FIRESTORM_GROUP)
+        assertThat(assembleProdDebugTestApk.group).isEqualTo("firestorm")
+        assertThat(assembleProdDebugTestApk.dependsOnTask("assembleProdDebug")).isTrue()
         assertThat(assembleProdDebugTestApk.dependsOnTask("assembleProdDebugAndroidTest")).isTrue()
+        assertThat(assembleProdDebugTestApk.isAppProject).isTrue()
+        assertThat(assembleProdDebugTestApk.testVariant.get().name).isEqualTo("prodDebugAndroidTest")
+        assertDefaultTaskConfigs(assembleProdDebugTestApk)
 
         val assembleMockReleaseTestApk = appProject.tasks.findByName("assembleMockReleaseTestApk")
         assertThat(assembleMockReleaseTestApk).isNull()
@@ -141,10 +170,14 @@ class FirestormAssemblerPluginTest {
         val assembleProdReleaseTestApk = appProject.tasks.findByName("assembleProdReleaseTestApk")
         assertThat(assembleProdReleaseTestApk).isNull()
 
-        val assembleDebugTestApk = libraryProject.tasks.getByName("assembleDebugTestApk")
+        val assembleDebugTestApk = libraryProject.tasks.getByName("assembleDebugTestApk") as AssembleTestApk
         assertThat(assembleDebugTestApk.description).isEqualTo("Assembles app and test APKs for debug.")
-        assertThat(assembleDebugTestApk.group).isEqualTo(FIRESTORM_GROUP)
+        assertThat(assembleDebugTestApk.group).isEqualTo("firestorm")
+        assertThat(assembleDebugTestApk.dependsOnTask("assembleDebug")).isFalse()
         assertThat(assembleDebugTestApk.dependsOnTask("assembleDebugAndroidTest")).isTrue()
+        assertThat(assembleDebugTestApk.isAppProject).isFalse()
+        assertThat(assembleDebugTestApk.testVariant.get().name).isEqualTo("debugAndroidTest")
+        assertDefaultTaskConfigs(assembleDebugTestApk)
 
         val assembleReleaseTestApk = libraryProject.tasks.findByName("assembleReleaseTestApk")
         assertThat(assembleReleaseTestApk).isNull()
@@ -152,7 +185,6 @@ class FirestormAssemblerPluginTest {
         assertThat(rootProject.getTasksByName("assembleDebugTestApk", true)).hasSize(1)
         assertThat(rootProject.getTasksByName("assembleMockDebugTestApk", true)).hasSize(1)
         assertThat(rootProject.getTasksByName("assembleProdDebugTestApk", true)).hasSize(1)
-        // TODO assert properties / configurations
     }
 
     @Test
@@ -173,5 +205,16 @@ class FirestormAssemblerPluginTest {
         assertThrows(ProjectConfigurationException::class.java) {
             (kotlinJvmProject as DefaultProject).evaluate()
         }
+    }
+
+    private fun assertDefaultTaskConfigs(task: AssembleTestApk) {
+        assertThat(task.incremental.get()).isTrue()
+        assertThat(task.incrementalAssemblerConfigs.includes).containsExactlyElementsIn(
+            IncrementalAssemblerConfigs.DEFAULT_INCLUDES
+        )
+        assertThat(task.incrementalAssemblerConfigs.excludes).containsExactlyElementsIn(
+            IncrementalAssemblerConfigs.DEFAULT_EXCLUDES
+        )
+        assertThat(task.incrementalAssemblerConfigs.checkDependencies).isTrue()
     }
 }
