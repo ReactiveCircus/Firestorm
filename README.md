@@ -1,40 +1,38 @@
 # Firestorm
 
-Gradle plugin for running multi-module Android instrumented tests on Firebase Test Lab.
-
-...
-
-### Assembler Plugin
-
-...
-
-### Runner Plugin
+Gradle plugin for running modularized Android instrumented tests on Firebase Test Lab.
 
 ...
 
 ## Installation
 
-Apply the **Runner Plugin** in the top-level `build.gradle`:
+The **Firestorm Plugin** is available from both **Maven Central** and **Gradle Plugin Portal**, add repositories in top-level `build.gradle`...
+
+...
+
+The plugin should be applied directly to **Android Application** or **Android Library** subprojects with instrumented tests.
+
+In the subproject's `build.gradle` file:
+
+Android Application project:
 
 ```gradle
-buildscript {
-    ext.firestormVersion = 'x.y.z'
-}
-
 plugins {
-    ...
-    // apply runner plugin
-    id 'firestorm-runner' version "$firestormVersion"
-}
-
-repositories {
-    mavenCentral()
-    google()
-    gradlePluginPortal()
+    id 'com.android.application'
+    id 'io.github.reactivecircus.firestorm' version "$firestormVersion"
 }
 ```
 
-Or use the traditional syntax:
+Android Library project:
+
+```gradle
+plugins {
+    id 'com.android.library'
+    id 'io.github.reactivecircus.firestorm' version "$firestormVersion"
+}
+```
+
+To use the traditional syntax, declare the plugin in the `buildscript` block within the top-level `build.gradle`:
 
 ```
 buildscript {
@@ -52,45 +50,22 @@ buildscript {
     }
 }
 
-// apply runner plugin
-apply plugin: 'firestorm-runner'
-
 ```
 
-Apply the **Assembler Plugin** to an Android application subproject:
+Then apply the plugin in the subproject's `build.gradle` file:
 
-In `app/build.gradle` file:
-
-```gradle
-plugins {
-    id 'com.android.application'
-    id 'firestorm-assembler' version "$firestormVersion"
-}
-```
-
-Or use the traditional syntax:
+Android Application project:
 
 ```gradle
 apply plugin: 'com.android.application'
-apply plugin: 'firestorm-assembler'
+apply plugin: 'io.github.reactivecircus.firestorm'
 ```
 
-Apply the **Assembler Plugin** to an Android library subproject:
-
-In `library/build.gradle` file:
-
-```gradle
-plugins {
-    id 'com.android.library'
-    id 'firestorm-assembler' version "$firestormVersion"
-}
-```
-
-Or use the traditional syntax:
+Android Library project:
 
 ```gradle
 apply plugin: 'com.android.library'
-apply plugin: 'firestorm-assembler'
+apply plugin: 'io.github.reactivecircus.firestorm'
 ```
 
 ## Configurations

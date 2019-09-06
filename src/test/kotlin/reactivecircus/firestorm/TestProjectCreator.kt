@@ -1,8 +1,6 @@
 package reactivecircus.firestorm
 
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.tasks.TaskProvider
 import java.io.File
 
 fun Project.createAndroidAppProject(hasProductFlavor: Boolean) {
@@ -40,7 +38,3 @@ fun Project.createAndroidLibraryProject(hasProductFlavor: Boolean) {
         writeText("""<manifest package="com.foo.bar"/>""")
     }
 }
-
-fun Task.dependsOnTask(taskName: String) = dependsOn.find {
-    (it as TaskProvider<*>).name == taskName
-} != null

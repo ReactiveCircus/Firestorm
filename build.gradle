@@ -25,13 +25,11 @@ repositories {
 
 gradlePlugin {
     plugins {
-        firestormAssembler {
-            id = 'firestorm-assembler'
-            implementationClass = 'reactivecircus.firestorm.assembler.FirestormAssemblerPlugin'
-        }
-        firestormRunner {
-            id = 'firestorm-runner'
-            implementationClass = 'reactivecircus.firestorm.runner.FirestormRunnerPlugin'
+        firestorm {
+            id = 'io.github.reactivecircus.firestorm'
+            displayName = 'Firestorm Gradle Plugin'
+            description = 'Gradle plugin for running modularized Android instrumented tests on Firebase Test Lab'
+            implementationClass = 'reactivecircus.firestorm.FirestormPlugin'
         }
     }
 }
@@ -71,8 +69,16 @@ task functionalTest(type: Test) {
     classpath = sourceSets.functionalTest.runtimeClasspath
 }
 
+
 check {
     dependsOn(tasks.functionalTest)
+}
+
+tasks.withType(Test).configureEach {
+    maxParallelForks Runtime.runtime.availableProcessors() * 2
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+    }
 }
 
 if (!isCiBuild) {

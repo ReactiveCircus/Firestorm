@@ -1,6 +1,10 @@
 plugins {
     id 'com.android.application'
-    id 'firestorm-runner'
+    id 'io.github.reactivecircus.firestorm'
+}
+
+firestorm {
+    incrementalAssembler = false
 }
 
 android {

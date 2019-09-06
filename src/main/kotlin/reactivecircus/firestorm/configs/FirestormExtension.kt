@@ -1,23 +1,23 @@
-package reactivecircus.firestorm.assembler
+package reactivecircus.firestorm.configs
 
 import groovy.lang.Closure
 import org.gradle.util.ConfigureUtil
-import reactivecircus.firestorm.assembler.incremental.IncrementalAssemblerConfigs
+import reactivecircus.firestorm.FirestormPlugin
 
 /**
- * Extension for [FirestormAssemblerPlugin].
+ * Extension for [FirestormPlugin].
  */
-open class FirestormAssemblerExtension {
+open class FirestormExtension {
 
     /**
      * Whether to skip assembling test APKs if the project source is unchanged
      * based on difference from the previous git commit.
      */
-    var incremental = DEFAULT_INCREMENTAL
+    var incrementalAssembler: Boolean = DEFAULT_INCREMENTAL_ASSEMBLER
 
     /**
-     * Configurations for incremental model.
-     * Only relevant when [incremental] is true.
+     * Configurations for incremental assembler.
+     * Only relevant when [incrementalAssembler] is true.
      */
     val incrementalAssemblerConfigs = IncrementalAssemblerConfigs()
 
@@ -31,6 +31,6 @@ open class FirestormAssemblerExtension {
         ConfigureUtil.configure(closure, incrementalAssemblerConfigs)
 
     companion object {
-        const val DEFAULT_INCREMENTAL = true
+        const val DEFAULT_INCREMENTAL_ASSEMBLER = true
     }
 }

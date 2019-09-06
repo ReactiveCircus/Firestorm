@@ -12,6 +12,10 @@ complexity:
     active: true
     threshold: 150
     excludes: "**/test/**, **/functionalTest/**"
+  LongMethod:
+    active: true
+    threshold: 60
+    excludes: "**/test/**, **/functionalTest/**"
   TooManyFunctions:
     active: true
     thresholdInFiles: 11

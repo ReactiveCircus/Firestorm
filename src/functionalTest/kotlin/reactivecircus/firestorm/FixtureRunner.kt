@@ -13,41 +13,89 @@ val defaultTopLevelBuildScript =
                 google()
             }
         }
+        tasks.register("clean", Delete) {
+            delete rootProject.buildDir
+        }
     """.trimIndent()
 
-val gradleRunner: GradleRunner by lazy {
+private val defaultGradleRunner: GradleRunner by lazy {
     GradleRunner.create().withPluginClasspath()
 }
 
-fun GradleRunner.runWithFixtures(
+fun withFixtureRunner(
     rootProject: TemporaryFolder,
-    topLevelBuildScript: String,
     subprojects: List<File>,
-    vararg commands: String,
-    action: GradleRunner.() -> BuildResult
-): BuildResult {
-    // copy all subprojects into the root project
-    subprojects.forEach {
-        it.copyRecursively(File(rootProject.root, it.name), true)
-    }
+    topLevelBuildScript: String = defaultTopLevelBuildScript,
+    dryRun: Boolean = false
+) = FixtureRunner(
+    gradleRunner = defaultGradleRunner,
+    rootProject = rootProject,
+    subprojects = subprojects,
+    topLevelBuildScript = topLevelBuildScript,
+    dryRun = dryRun
+)
 
-    // add build.gradle to root project
-    rootProject.newFile("build.gradle").writeText(topLevelBuildScript)
-
-    // generate local.properties with sdk.dir
-    val androidHome = androidHome()
-    rootProject.newFile("local.properties").writeText("sdk.dir=$androidHome\n")
-
-    // generate settings.gradle
-    rootProject.newFile("settings.gradle").run {
+class FixtureRunner(
+    private val gradleRunner: GradleRunner,
+    private val rootProject: TemporaryFolder,
+    topLevelBuildScript: String,
+    private val subprojects: List<File>,
+    private val dryRun: Boolean
+) {
+    init {
+        // copy all subprojects into the root project
         subprojects.forEach {
-            appendText("include ':${it.name}'\n")
+            it.copyRecursively(File(rootProject.root, it.name), overwrite = true)
+        }
+
+        // add build.gradle to root project
+        rootProject.newFile("build.gradle").writeText(topLevelBuildScript)
+
+        // generate local.properties with sdk.dir
+        val androidHome = androidHome()
+        rootProject.newFile("local.properties").writeText("sdk.dir=$androidHome\n")
+
+        // generate settings.gradle
+        rootProject.newFile("settings.gradle").run {
+            val localBuildCacheDirectory = rootProject.newFolder("local-cache")
+            appendText(
+                """
+                buildCache {
+                    local {
+                        directory '${localBuildCacheDirectory.toURI()}'
+                    }
+                }
+                """.trimIndent()
+            )
+            appendText("\n")
+            subprojects.forEach {
+                appendText("include ':${it.name}'\n")
+            }
         }
     }
 
-    return withProjectDir(rootProject.root)
-        .withArguments(commands.asList() + "--stacktrace")
-        .action()
+    fun runAndCheckResult(vararg commands: String, action: BuildResult.() -> Unit) {
+        val buildResult = gradleRunner.withProjectDir(rootProject.root)
+            .withArguments(buildArguments(commands.toList()))
+            .build()
+        action(buildResult)
+    }
+
+    fun runAndExpectFailure(vararg commands: String, action: BuildResult.() -> Unit) {
+        val buildResult = gradleRunner.withProjectDir(rootProject.root)
+            .withArguments(buildArguments(commands.toList()))
+            .buildAndFail()
+        action(buildResult)
+    }
+
+    private fun buildArguments(commands: List<String>): List<String> {
+        val args = mutableListOf("--stacktrace", "--info")
+        if (dryRun) {
+            args.add("--dry-run")
+        }
+        args.addAll(commands)
+        return args
+    }
 }
 
 private fun androidHome(): String {
