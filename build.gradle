@@ -25,6 +25,9 @@ repositories {
     gradlePluginPortal()
 }
 
+group = GROUP
+version = VERSION_NAME
+
 pluginBundle {
     website = POM_URL
     vcsUrl = POM_SCM_URL
