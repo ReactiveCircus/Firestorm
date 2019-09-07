@@ -1,5 +1,7 @@
 # Firestorm
 
+[![CircleCI](https://circleci.com/gh/ReactiveCircus/Firestorm.svg?style=svg)](https://circleci.com/gh/ReactiveCircus/Firestorm) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 Gradle plugin for running modularized Android instrumented tests on Firebase Test Lab.
 
 ...
