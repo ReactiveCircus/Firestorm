@@ -6,9 +6,21 @@ Gradle plugin for running modularized Android instrumented tests on Firebase Tes
 
 ## Installation
 
-The **Firestorm Plugin** is available from both **Maven Central** and **Gradle Plugin Portal**, add repositories in top-level `build.gradle`...
+The **Firestorm Plugin** is available from both **Maven Central** and **Gradle Plugin Portal**. Make sure your top-level `build.gradle` has either `mavenCentral()` or `gradlePluginPortal()` defined in the `buildscript` block:
 
-...
+```groovy
+buildscript {
+    ext.firestormVersion = '0.1.0'
+    
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+        ...
+    }
+}
+```
+
+### Applying the plugin
 
 The plugin should be applied directly to **Android Application** or **Android Library** subprojects with instrumented tests.
 
@@ -16,7 +28,7 @@ In the subproject's `build.gradle` file:
 
 Android Application project:
 
-```gradle
+```groovy
 plugins {
     id 'com.android.application'
     id 'io.github.reactivecircus.firestorm' version "$firestormVersion"
@@ -25,7 +37,7 @@ plugins {
 
 Android Library project:
 
-```gradle
+```groovy
 plugins {
     id 'com.android.library'
     id 'io.github.reactivecircus.firestorm' version "$firestormVersion"
@@ -34,7 +46,7 @@ plugins {
 
 To use the traditional syntax, declare the plugin in the `buildscript` block within the top-level `build.gradle`:
 
-```
+```groovy
 buildscript {
     ext.firestormVersion = 'x.y.z'
     
@@ -49,28 +61,61 @@ buildscript {
         classpath "io.github.reactivecircus.firestorm:firestorm-gradle-plugin:$firestormVersion"
     }
 }
-
 ```
 
 Then apply the plugin in the subproject's `build.gradle` file:
 
 Android Application project:
 
-```gradle
+```groovy
 apply plugin: 'com.android.application'
 apply plugin: 'io.github.reactivecircus.firestorm'
 ```
 
 Android Library project:
 
-```gradle
+```groovy
 apply plugin: 'com.android.library'
 apply plugin: 'io.github.reactivecircus.firestorm'
 ```
 
 ## Configurations
 
-...
+Available plugin configurations and default values:
+
+```groovy
+plugins {
+    id 'com.android.application'
+    id 'io.github.reactivecircus.firestorm' version "$firestormVersion"
+}
+
+firestorm {
+    // Whether to skip assembling test APKs if the project source is unchanged based on difference from the previous git commit.
+    incrementalAssembler = true
+
+    // Configurations for incremental assembler. Only relevant when [incrementalAssembler] is true.
+    incrementalAssemblerConfigs {
+        // Set of include patterns to be considered when performing project source change detection.
+        includes = [
+            "src/**/*.kt",
+            "src/**/*.java",
+            "src/**/*.xml",
+            "src/*/assets",
+            "build.gradle",
+            "build.gradle.kts",
+            "*.properties"
+        ]
+
+        // Set of exclude patterns to be ignored when performing project source change detection.
+        excludes = [
+            "src/test*"
+        ]
+
+        // Whether to recursively check the project's transitive dependencies when performing project source change detection.
+        checkDependencies = true 
+    }
+}
+```
 
 ## License
 
