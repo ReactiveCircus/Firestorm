@@ -29,18 +29,18 @@ abstract class AssembleApkPair : DefaultTask() {
 
     @get:InputFile
     @get:Classpath
-    @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val inputAppApk: RegularFileProperty
 
     @get:InputFile
     @get:Classpath
-    @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val inputTestApk: RegularFileProperty
 
     @get:OutputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val outputAppApk: RegularFileProperty
 
     @get:OutputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val outputTestApk: RegularFileProperty
 
     init {

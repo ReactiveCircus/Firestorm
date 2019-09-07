@@ -4,9 +4,10 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import reactivecircus.firestorm.DUMMY_APK_FILE
-import java.io.File
 
 /**
  * Firebase Test Lab requires an "app" APK which doesn't make sense when running tests for an Android Library project.
@@ -16,11 +17,13 @@ import java.io.File
 abstract class GenerateDummyApk : DefaultTask() {
 
     @get:OutputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val dummyApk: RegularFileProperty
 
     @TaskAction
     fun generate() {
-        File(javaClass.classLoader.getResource(DUMMY_APK_FILE)!!.file)
-            .copyTo(dummyApk.get().asFile, overwrite = true)
+        dummyApk.get().asFile.writeBytes(
+            javaClass.classLoader.getResource(DUMMY_APK_FILE)!!.readBytes()
+        )
     }
 }

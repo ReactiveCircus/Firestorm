@@ -21,7 +21,7 @@ class FirestormPluginFunctionalTest {
             "clean"
         ) {
             assertThat(output).contains(
-                "Please make sure either the 'com.android.library' or 'com.android.application' plugin is applied to the project."
+                "Firestorm plugin is designed to work with Android projects but project ':kotlin' doesn't have either 'com.android.library' or 'com.android.application' plugin applied."
             )
         }
     }
@@ -40,7 +40,7 @@ class FirestormPluginFunctionalTest {
             "clean"
         ) {
             assertThat(output).contains(
-                "Please apply Firestorm plugin directly to subproject(s)."
+                "Please apply Firestorm plugin directly to Android Application or Library subproject(s)."
             )
         }
     }
