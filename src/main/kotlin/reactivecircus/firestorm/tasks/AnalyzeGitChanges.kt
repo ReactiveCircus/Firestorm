@@ -1,4 +1,4 @@
-package reactivecircus.firestorm.task
+package reactivecircus.firestorm.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
@@ -11,10 +11,10 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
 /**
- * Checks if the project source has changed by comparing with the previous git commit.
+ * Analyze and detect meaningful git changes in a subproject (module).
  */
 @CacheableTask
-abstract class CheckIncrementalSourceChange : DefaultTask() {
+abstract class AnalyzeGitChanges : DefaultTask() {
 
     // TODO add git commit hash as input?
 
@@ -31,7 +31,7 @@ abstract class CheckIncrementalSourceChange : DefaultTask() {
     abstract val result: RegularFileProperty
 
     /**
-     * Returns a Provider<Boolean> indicating whether the source has changed.
+     * Returns a Provider<Boolean> indicating whether the project has meaningful git changes.
      */
     fun sourceChanged(): Provider<Boolean> {
         return result.map { regularFile ->
@@ -48,7 +48,7 @@ abstract class CheckIncrementalSourceChange : DefaultTask() {
     // TODO figure out how to make task cacheable and avoid IO / computation in configuration phase
 
     @TaskAction
-    fun check() {
+    fun analyze() {
         result.get().asFile.writeText(true.toString())
     }
 }

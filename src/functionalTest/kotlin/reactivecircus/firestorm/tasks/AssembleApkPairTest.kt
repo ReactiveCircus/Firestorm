@@ -1,10 +1,11 @@
-package reactivecircus.firestorm.task
+package reactivecircus.firestorm.tasks
 
 import com.google.common.truth.Truth.assertThat
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import reactivecircus.firestorm.Fixture
 import reactivecircus.firestorm.assertFileExists
 import reactivecircus.firestorm.withFixtureRunner
 import java.io.File
@@ -16,14 +17,14 @@ class AssembleApkPairTest {
 
     @Test
     fun `generates 1 app APK and 1 test APK for a project with only app subproject (no product flavor)`() {
-        val appProjectWithoutFlavor = File("src/functionalTest/fixtures/application-no-flavor")
+        val appProjectWithoutFlavor = Fixture("src/functionalTest/fixtures/application-no-flavor")
         withFixtureRunner(
             rootProject = testProjectRoot,
-            subprojects = listOf(appProjectWithoutFlavor)
+            fixtures = listOf(appProjectWithoutFlavor)
         ).runAndCheckResult(
             "assembleDebugApkPair"
         ) {
-            assertThat(task(":application-no-flavor:checkIncrementalSourceChange")?.outcome)
+            assertThat(task(":application-no-flavor:analyzeGitChanges")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)
             assertThat(task(":application-no-flavor:packageDebug")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)
@@ -50,16 +51,16 @@ class AssembleApkPairTest {
 
     @Test
     fun `generates 1 app APK and 1 test APK for a project with only app subproject (with product flavors)`() {
-        val appProjectWithFlavors = File("src/functionalTest/fixtures/application-with-flavors")
+        val appProjectWithFlavors = Fixture("src/functionalTest/fixtures/application-with-flavors")
         withFixtureRunner(
             rootProject = testProjectRoot,
-            subprojects = listOf(appProjectWithFlavors)
+            fixtures = listOf(appProjectWithFlavors)
         ).runAndCheckResult(
             "assembleMockDebugApkPair"
         ) {
             assertThat(task(":generateDummyApk")?.outcome)
                 .isNull()
-            assertThat(task(":application-with-flavors:checkIncrementalSourceChange")?.outcome)
+            assertThat(task(":application-with-flavors:analyzeGitChanges")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)
             assertThat(task(":application-with-flavors:packageMockDebug")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)
@@ -91,16 +92,16 @@ class AssembleApkPairTest {
 
     @Test
     fun `generates 1 app APK and 1 test APK per subproject for a project with 1 app subproject (with project flavors) and multiple Android Library subprojects`() {
-        val appProjectWithFlavors = File("src/functionalTest/fixtures/application-with-flavors")
-        val libraryProjectWithoutFlavors1 = File("src/functionalTest/fixtures/library-no-flavor-1")
-        val libraryProjectWithoutFlavors2 = File("src/functionalTest/fixtures/library-no-flavor-2")
+        val appProjectWithFlavors = Fixture("src/functionalTest/fixtures/application-with-flavors")
+        val libraryProjectWithoutFlavors1 = Fixture("src/functionalTest/fixtures/library-no-flavor-1")
+        val libraryProjectWithoutFlavors2 = Fixture("src/functionalTest/fixtures/library-no-flavor-2")
         withFixtureRunner(
             rootProject = testProjectRoot,
-            subprojects = listOf(appProjectWithFlavors, libraryProjectWithoutFlavors1, libraryProjectWithoutFlavors2)
+            fixtures = listOf(appProjectWithFlavors, libraryProjectWithoutFlavors1, libraryProjectWithoutFlavors2)
         ).runAndCheckResult(
             "assembleMockDebugApkPair", "assembleDebugApkPair"
         ) {
-            assertThat(task(":application-with-flavors:checkIncrementalSourceChange")?.outcome)
+            assertThat(task(":application-with-flavors:analyzeGitChanges")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)
             assertThat(task(":application-with-flavors:packageMockDebug")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)
@@ -109,7 +110,7 @@ class AssembleApkPairTest {
             assertThat(task(":application-with-flavors:assembleMockDebugApkPair")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)
 
-            assertThat(task(":library-no-flavor-1:checkIncrementalSourceChange")?.outcome)
+            assertThat(task(":library-no-flavor-1:analyzeGitChanges")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)
             assertThat(task(":library-no-flavor-1:packageDebug")?.outcome)
                 .isNull()
@@ -118,7 +119,7 @@ class AssembleApkPairTest {
             assertThat(task(":library-no-flavor-1:assembleDebugApkPair")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)
 
-            assertThat(task(":library-no-flavor-2:checkIncrementalSourceChange")?.outcome)
+            assertThat(task(":library-no-flavor-2:analyzeGitChanges")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)
             assertThat(task(":library-no-flavor-2:packageDebug")?.outcome)
                 .isNull()
@@ -170,15 +171,15 @@ class AssembleApkPairTest {
 
     @Test
     fun `generates 1 app APK and 1 test APK per subproject for a project with only Android Library subprojects (no product flavor)`() {
-        val libraryProjectWithoutFlavors1 = File("src/functionalTest/fixtures/library-no-flavor-1")
-        val libraryProjectWithoutFlavors2 = File("src/functionalTest/fixtures/library-no-flavor-2")
+        val libraryProjectWithoutFlavors1 = Fixture("src/functionalTest/fixtures/library-no-flavor-1")
+        val libraryProjectWithoutFlavors2 = Fixture("src/functionalTest/fixtures/library-no-flavor-2")
         withFixtureRunner(
             rootProject = testProjectRoot,
-            subprojects = listOf(libraryProjectWithoutFlavors1, libraryProjectWithoutFlavors2)
+            fixtures = listOf(libraryProjectWithoutFlavors1, libraryProjectWithoutFlavors2)
         ).runAndCheckResult(
             "assembleDebugApkPair"
         ) {
-            assertThat(task(":library-no-flavor-1:checkIncrementalSourceChange")?.outcome)
+            assertThat(task(":library-no-flavor-1:analyzeGitChanges")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)
             assertThat(task(":library-no-flavor-1:packageDebug")?.outcome)
                 .isNull()
@@ -187,7 +188,7 @@ class AssembleApkPairTest {
             assertThat(task(":library-no-flavor-1:assembleDebugApkPair")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)
 
-            assertThat(task(":library-no-flavor-2:checkIncrementalSourceChange")?.outcome)
+            assertThat(task(":library-no-flavor-2:analyzeGitChanges")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)
             assertThat(task(":library-no-flavor-2:packageDebug")?.outcome)
                 .isNull()
@@ -227,15 +228,15 @@ class AssembleApkPairTest {
 
     @Test
     fun `generates 1 app APK and 1 test APK per subproject for a project with only Android Library subprojects (with product flavors)`() {
-        val libraryProjectWithFlavors1 = File("src/functionalTest/fixtures/library-with-flavors-1")
-        val libraryProjectWithFlavors2 = File("src/functionalTest/fixtures/library-with-flavors-2")
+        val libraryProjectWithFlavors1 = Fixture("src/functionalTest/fixtures/library-with-flavors-1")
+        val libraryProjectWithFlavors2 = Fixture("src/functionalTest/fixtures/library-with-flavors-2")
         withFixtureRunner(
             rootProject = testProjectRoot,
-            subprojects = listOf(libraryProjectWithFlavors1, libraryProjectWithFlavors2)
+            fixtures = listOf(libraryProjectWithFlavors1, libraryProjectWithFlavors2)
         ).runAndCheckResult(
             "assembleMockDebugApkPair"
         ) {
-            assertThat(task(":library-with-flavors-1:checkIncrementalSourceChange")?.outcome)
+            assertThat(task(":library-with-flavors-1:analyzeGitChanges")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)
             assertThat(task(":library-with-flavors-1:packageMockDebug")?.outcome)
                 .isNull()
@@ -244,7 +245,7 @@ class AssembleApkPairTest {
             assertThat(task(":library-with-flavors-1:assembleMockDebugApkPair")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)
 
-            assertThat(task(":library-with-flavors-2:checkIncrementalSourceChange")?.outcome)
+            assertThat(task(":library-with-flavors-2:analyzeGitChanges")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)
             assertThat(task(":library-with-flavors-2:packageMockDebug")?.outcome)
                 .isNull()
@@ -280,27 +281,34 @@ class AssembleApkPairTest {
     }
 
     @Test
-    fun `skips checkIncrementalSourceChange task when incrementalAssembler is disabled`() {
-        val appProjectWithoutIncrementalAssembler = File("src/functionalTest/fixtures/application-without-incremental-assembler")
+    fun `skips analyzeGitChanges task when smartTrigger is disabled`() {
+        val appProjectWithoutSmartTrigger = Fixture(
+            path = "src/functionalTest/fixtures/application-no-flavor",
+            pluginConfigs = """
+            firestorm {
+                smartTrigger = false
+            }
+            """.trimIndent()
+        )
         withFixtureRunner(
             rootProject = testProjectRoot,
-            subprojects = listOf(appProjectWithoutIncrementalAssembler)
+            fixtures = listOf(appProjectWithoutSmartTrigger)
         ).runAndCheckResult(
             "assembleDebugApkPair"
         ) {
-            assertThat(task(":application-without-incremental-assembler:checkIncrementalSourceChange")?.outcome)
+            assertThat(task(":application-no-flavor:analyzeGitChanges")?.outcome)
                 .isNull()
-            assertThat(task(":application-without-incremental-assembler:assembleDebugApkPair")?.outcome)
+            assertThat(task(":application-no-flavor:assembleDebugApkPair")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)
         }
     }
 
     @Test
     fun `AssembleApkPair supports incremental build`() {
-        val appProjectWithoutFlavor = File("src/functionalTest/fixtures/application-no-flavor")
+        val appProjectWithoutFlavor = Fixture("src/functionalTest/fixtures/application-no-flavor")
         val runner = withFixtureRunner(
             rootProject = testProjectRoot,
-            subprojects = listOf(appProjectWithoutFlavor)
+            fixtures = listOf(appProjectWithoutFlavor)
         )
 
         runner.runAndCheckResult(
@@ -320,10 +328,10 @@ class AssembleApkPairTest {
 
     @Test
     fun `AssembleApkPair is cacheable`() {
-        val libraryProjectWithoutFlavors = File("src/functionalTest/fixtures/library-no-flavor-1")
+        val libraryProjectWithoutFlavors = Fixture("src/functionalTest/fixtures/library-no-flavor-1")
         val runner = withFixtureRunner(
             rootProject = testProjectRoot,
-            subprojects = listOf(libraryProjectWithoutFlavors)
+            fixtures = listOf(libraryProjectWithoutFlavors)
         )
 
         runner.runAndCheckResult(

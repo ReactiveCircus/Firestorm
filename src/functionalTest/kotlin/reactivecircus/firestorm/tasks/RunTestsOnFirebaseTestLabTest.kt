@@ -1,4 +1,4 @@
-package reactivecircus.firestorm.task
+package reactivecircus.firestorm.tasks
 
 // TODO test with --dry-run
 class RunTestsOnFirebaseTestLabTest

@@ -1,4 +1,4 @@
-package reactivecircus.firestorm.task
+package reactivecircus.firestorm.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty

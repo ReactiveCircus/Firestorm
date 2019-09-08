@@ -8,7 +8,7 @@ Gradle plugin for running modularized Android instrumented tests on Firebase Tes
 
 ## Installation
 
-The **Firestorm Plugin** is available from both **Maven Central** and **Gradle Plugin Portal**. Make sure your top-level `build.gradle` has either `mavenCentral()` or `gradlePluginPortal()` defined in the `buildscript` block:
+The **Firestorm Gradle Plugin** is available from both **Maven Central** and **Gradle Plugin Portal**. Make sure your top-level `build.gradle` has either `mavenCentral()` or `gradlePluginPortal()` defined in the `buildscript` block:
 
 ```groovy
 buildscript {
@@ -92,12 +92,15 @@ plugins {
 }
 
 firestorm {
-    // Whether to skip assembling test APKs if the project source is unchanged based on difference from the previous git commit.
-    incrementalAssembler = true
+    // Enable or disable the plugin
+    enabled = true    
 
-    // Configurations for incremental assembler. Only relevant when [incrementalAssembler] is true.
-    incrementalAssemblerConfigs {
-        // Set of include patterns to be considered when performing project source change detection.
+    // Whether to only trigger assembling APKs and running tests if the project source has meaningful git changes.
+    smartTrigger = true
+
+    // Configurations for smart trigger. Only relevant when [smartTrigger] is true.
+    smartTriggerConfigs {
+        // Set of include patterns to be considered when performing project source git changes detection.
         includes = [
             "src/**/*.kt",
             "src/**/*.java",
@@ -108,12 +111,12 @@ firestorm {
             "*.properties"
         ]
 
-        // Set of exclude patterns to be ignored when performing project source change detection.
+        // Set of exclude patterns to be ignored when performing project source git changes detection.
         excludes = [
             "src/test*"
         ]
 
-        // Whether to recursively check the project's transitive dependencies when performing project source change detection.
+        // Whether to recursively check the project's transitive dependencies when performing project source git changes detection.
         checkDependencies = true 
     }
 }

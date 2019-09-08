@@ -6,11 +6,10 @@ import org.gradle.api.DomainObjectSet
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
-import reactivecircus.firestorm.configs.FirestormExtension
-import reactivecircus.firestorm.task.AssembleApkPair
-import reactivecircus.firestorm.task.CheckIncrementalSourceChange
-import reactivecircus.firestorm.task.GenerateDummyApk
-import reactivecircus.firestorm.task.RunTestsOnFirebaseTestLab
+import reactivecircus.firestorm.tasks.AssembleApkPair
+import reactivecircus.firestorm.tasks.AnalyzeGitChanges
+import reactivecircus.firestorm.tasks.GenerateDummyApk
+import reactivecircus.firestorm.tasks.RunTestsOnFirebaseTestLab
 import java.io.File
 
 /**
@@ -34,9 +33,13 @@ class FirestormPlugin : Plugin<Project> {
                 "Firestorm plugin is designed to work with Android projects but ${project.displayName} doesn't have either 'com.android.library' or 'com.android.application' plugin applied."
             }
 
-            when {
-                isAndroidAppProject -> registerTasks(project, extension, project.appExtension.testVariants)
-                isAndroidLibraryProject -> registerTasks(project, extension, project.libraryExtension.testVariants)
+            if (extension.enabled) {
+                when {
+                    isAndroidAppProject -> registerTasks(project, extension, project.appExtension.testVariants)
+                    isAndroidLibraryProject -> registerTasks(project, extension, project.libraryExtension.testVariants)
+                }
+            } else {
+                project.logger.info("Firestorm plugin is disabled.")
             }
         }
     }
@@ -46,8 +49,13 @@ class FirestormPlugin : Plugin<Project> {
         extension: FirestormExtension,
         testVariants: DomainObjectSet<TestVariant>
     ) {
-        val checkIncrementalSourceChange = registerCheckIncrementalSourceChangeTask(project, extension)
-        val generateDummyApk = registerGenerateDummyApkTask(project)
+        // register AnalyzeGitChanges task if smartTrigger is enabled
+        val analyzeGitChanges = takeIf { extension.smartTrigger }
+            ?.registerAnalyzeGitChangesTask(project, extension)
+
+        // register GenerateDummyApk task if project is an Android Library project
+        val generateDummyApk = takeIf { project.hasAndroidLibraryPlugin }
+            ?.registerGenerateDummyApkTask(project)
 
         testVariants.all { testVariant ->
             val testedVariantName = testVariant.testedVariant.name
@@ -57,7 +65,7 @@ class FirestormPlugin : Plugin<Project> {
             val appApkProvider = (testVariant.testedVariant as? ApplicationVariant)?.packageApplicationProvider
                 ?.flatMap {
                     it.outputDirectory.file(it.apkNames.first())
-                } ?: generateDummyApk.flatMap { it.dummyApk }
+                } ?: generateDummyApk!!.flatMap { it.dummyApk }
 
             val testApkProvider = testVariant.packageApplicationProvider
                 .flatMap {
@@ -71,8 +79,8 @@ class FirestormPlugin : Plugin<Project> {
                 task.description = "Assembles app and test APKs for $testedVariantName."
                 task.inputAppApk.set(appApkProvider)
                 task.inputTestApk.set(testApkProvider)
-                if (extension.incrementalAssembler) {
-                    task.shouldSkip.set(checkIncrementalSourceChange.flatMap { it.sourceChanged() })
+                if (extension.smartTrigger) {
+                    task.shouldSkip.set(analyzeGitChanges!!.flatMap { it.sourceChanged() })
                 }
                 task.outputAppApk.set(
                     File(
@@ -99,19 +107,19 @@ class FirestormPlugin : Plugin<Project> {
         }
     }
 
-    private fun registerCheckIncrementalSourceChangeTask(
+    private fun registerAnalyzeGitChangesTask(
         project: Project,
         extension: FirestormExtension
-    ): TaskProvider<CheckIncrementalSourceChange> {
+    ): TaskProvider<AnalyzeGitChanges> {
         return project.tasks.register(
-            "checkIncrementalSourceChange", CheckIncrementalSourceChange::class.java
+            "analyzeGitChanges", AnalyzeGitChanges::class.java
         ) {
             it.group = FIRESTORM_TASK_GROUP
-            it.description = "Checks if project source has changed based on difference from the previous git commit."
-            it.includes.set(extension.incrementalAssemblerConfigs.includes)
-            it.excludes.set(extension.incrementalAssemblerConfigs.excludes)
-            it.checkDependencies.set(extension.incrementalAssemblerConfigs.checkDependencies)
-            it.result.set(File(project.buildDir, "$FIRESTORM_TASK_OUTPUT_DIR/$INCREMENTAL_SOURCE_CHANGE_RESULT_FILE"))
+            it.description = "Checks if project source has meaningful git changes."
+            it.includes.set(extension.smartTriggerConfigs.includes)
+            it.excludes.set(extension.smartTriggerConfigs.excludes)
+            it.checkDependencies.set(extension.smartTriggerConfigs.checkDependencies)
+            it.result.set(File(project.buildDir, "$FIRESTORM_TASK_OUTPUT_DIR/$GIT_CHANGES_ANALYSIS_RESULT_FILE"))
         }
     }
 

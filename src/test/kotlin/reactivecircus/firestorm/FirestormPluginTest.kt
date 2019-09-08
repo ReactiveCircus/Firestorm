@@ -5,6 +5,7 @@ import com.android.build.gradle.LibraryPlugin
 import com.google.common.truth.Truth.assertThat
 import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
+import org.gradle.api.UnknownTaskException
 import org.gradle.api.internal.project.DefaultProject
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Assert.assertThrows
@@ -25,8 +26,8 @@ class FirestormPluginTest {
 
         (appProject as DefaultProject).evaluate()
 
-        assertCheckIncrementalSourceChangeTaskRegistered(appProject)
-        assertGenerateDummyApkTaskRegisteredOnRootProject()
+        assertAnalyzeGitChangesTaskRegistered(appProject)
+        assertTaskNotRegistered(appProject, "generateDummyApk")
 
         val assembleDebugApkPair = appProject.tasks.getByName("assembleDebugApkPair")
         assertThat(assembleDebugApkPair.group).isEqualTo(FIRESTORM_TASK_GROUP)
@@ -50,8 +51,8 @@ class FirestormPluginTest {
 
         (appProject as DefaultProject).evaluate()
 
-        assertCheckIncrementalSourceChangeTaskRegistered(appProject)
-        assertGenerateDummyApkTaskRegisteredOnRootProject()
+        assertAnalyzeGitChangesTaskRegistered(appProject)
+        assertTaskNotRegistered(appProject, "generateDummyApk")
 
         val assembleMockDebugApkPair = appProject.tasks.getByName("assembleMockDebugApkPair")
         assertThat(assembleMockDebugApkPair.group).isEqualTo(FIRESTORM_TASK_GROUP)
@@ -85,6 +86,9 @@ class FirestormPluginTest {
 
         (libraryProject as DefaultProject).evaluate()
 
+        assertAnalyzeGitChangesTaskRegistered(libraryProject)
+        assertGenerateDummyApkTaskRegisteredOnRootProject()
+
         val assembleDebugApkPair = libraryProject.tasks.getByName("assembleDebugApkPair")
         assertThat(assembleDebugApkPair.group).isEqualTo(FIRESTORM_TASK_GROUP)
         assertThat(assembleDebugApkPair.description).isEqualTo("Assembles app and test APKs for debug.")
@@ -102,7 +106,7 @@ class FirestormPluginTest {
 
         (libraryProject as DefaultProject).evaluate()
 
-        assertCheckIncrementalSourceChangeTaskRegistered(libraryProject)
+        assertAnalyzeGitChangesTaskRegistered(libraryProject)
         assertGenerateDummyApkTaskRegisteredOnRootProject()
 
         val assembleMockDebugApkPair = libraryProject.tasks.getByName("assembleMockDebugApkPair")
@@ -144,7 +148,8 @@ class FirestormPluginTest {
         (appProject as DefaultProject).evaluate()
         (libraryProject as DefaultProject).evaluate()
 
-        assertCheckIncrementalSourceChangeTaskRegistered(appProject)
+        assertAnalyzeGitChangesTaskRegistered(appProject)
+        assertGenerateDummyApkTaskRegisteredOnRootProject()
 
         val assembleMockDebugApkPair = appProject.tasks.getByName("assembleMockDebugApkPair")
         assertThat(assembleMockDebugApkPair.group).isEqualTo(FIRESTORM_TASK_GROUP)
@@ -182,7 +187,7 @@ class FirestormPluginTest {
 
         assertGenerateDummyApkTaskRegisteredOnRootProject()
 
-        assertThat(rootProject.getTasksByName("checkIncrementalSourceChange", true)).hasSize(2)
+        assertThat(rootProject.getTasksByName("analyzeGitChanges", true)).hasSize(2)
         assertThat(rootProject.getTasksByName("generateDummyApk", true)).hasSize(1)
         assertThat(rootProject.getTasksByName("assembleDebugApkPair", true)).hasSize(1)
         assertThat(rootProject.getTasksByName("assembleMockDebugApkPair", true)).hasSize(1)
@@ -209,15 +214,21 @@ class FirestormPluginTest {
         }
     }
 
-    private fun assertCheckIncrementalSourceChangeTaskRegistered(project: Project) {
-        val checkIncrementalSourceChange = project.tasks.getByName("checkIncrementalSourceChange")
-        assertThat(checkIncrementalSourceChange.group).isEqualTo(FIRESTORM_TASK_GROUP)
-        assertThat(checkIncrementalSourceChange.description).isEqualTo("Checks if project source has changed based on difference from the previous git commit.")
+    private fun assertAnalyzeGitChangesTaskRegistered(project: Project) {
+        val analyzeGitChanges = project.tasks.getByName("analyzeGitChanges")
+        assertThat(analyzeGitChanges.group).isEqualTo(FIRESTORM_TASK_GROUP)
+        assertThat(analyzeGitChanges.description).isEqualTo("Checks if project source has meaningful git changes.")
     }
 
     private fun assertGenerateDummyApkTaskRegisteredOnRootProject() {
         val generateDummyApk = rootProject.tasks.getByName("generateDummyApk")
         assertThat(generateDummyApk.group).isEqualTo(FIRESTORM_TASK_GROUP)
         assertThat(generateDummyApk.description).isEqualTo("Generates a dummy APK for running Android Library tests on Firebase Test Lab.")
+    }
+
+    private fun assertTaskNotRegistered(project: Project, taskName: String) {
+        assertThrows(UnknownTaskException::class.java) {
+            project.tasks.getByName(taskName)
+        }
     }
 }

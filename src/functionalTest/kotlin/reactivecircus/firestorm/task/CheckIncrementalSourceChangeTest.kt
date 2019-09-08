@@ -1,3 +1,0 @@
-package reactivecircus.firestorm.task
-
-class CheckIncrementalSourceChangeTest

@@ -1,10 +1,11 @@
-package reactivecircus.firestorm.task
+package reactivecircus.firestorm.tasks
 
 import com.google.common.truth.Truth.assertThat
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import reactivecircus.firestorm.Fixture
 import reactivecircus.firestorm.assertFileExists
 import reactivecircus.firestorm.withFixtureRunner
 import java.io.File
@@ -16,10 +17,10 @@ class GenerateDummyApkTest {
 
     @Test
     fun `generates dummy APK`() {
-        val libraryProjectWithoutFlavors = File("src/functionalTest/fixtures/library-no-flavor-1")
+        val libraryProjectWithoutFlavors = Fixture("src/functionalTest/fixtures/library-no-flavor-1")
         withFixtureRunner(
             rootProject = testProjectRoot,
-            subprojects = listOf(libraryProjectWithoutFlavors)
+            fixtures = listOf(libraryProjectWithoutFlavors)
         ).runAndCheckResult(
             "generateDummyApk"
         ) {
@@ -34,10 +35,10 @@ class GenerateDummyApkTest {
 
     @Test
     fun `GenerateDummyApk supports incremental build`() {
-        val libraryProjectWithoutFlavors = File("src/functionalTest/fixtures/library-no-flavor-1")
+        val libraryProjectWithoutFlavors = Fixture("src/functionalTest/fixtures/library-no-flavor-1")
         val runner = withFixtureRunner(
             rootProject = testProjectRoot,
-            subprojects = listOf(libraryProjectWithoutFlavors)
+            fixtures = listOf(libraryProjectWithoutFlavors)
         )
 
         runner.runAndCheckResult(
@@ -57,10 +58,10 @@ class GenerateDummyApkTest {
 
     @Test
     fun `GenerateDummyApk is cacheable`() {
-        val libraryProjectWithoutFlavors = File("src/functionalTest/fixtures/library-no-flavor-1")
+        val libraryProjectWithoutFlavors = Fixture("src/functionalTest/fixtures/library-no-flavor-1")
         val runner = withFixtureRunner(
             rootProject = testProjectRoot,
-            subprojects = listOf(libraryProjectWithoutFlavors)
+            fixtures = listOf(libraryProjectWithoutFlavors)
         )
 
         runner.runAndCheckResult(

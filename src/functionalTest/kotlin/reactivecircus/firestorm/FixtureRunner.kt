@@ -8,14 +8,14 @@ import java.util.Properties
 
 val defaultTopLevelBuildScript =
     """
-        allprojects {
-            repositories {
-                google()
-            }
+    allprojects {
+        repositories {
+            google()
         }
-        tasks.register("clean", Delete) {
-            delete rootProject.buildDir
-        }
+    }
+    tasks.register("clean", Delete) {
+        delete rootProject.buildDir
+    }
     """.trimIndent()
 
 private val defaultGradleRunner: GradleRunner by lazy {
@@ -24,28 +24,40 @@ private val defaultGradleRunner: GradleRunner by lazy {
 
 fun withFixtureRunner(
     rootProject: TemporaryFolder,
-    subprojects: List<File>,
+    fixtures: List<Fixture>,
     topLevelBuildScript: String = defaultTopLevelBuildScript,
     dryRun: Boolean = false
 ) = FixtureRunner(
     gradleRunner = defaultGradleRunner,
     rootProject = rootProject,
-    subprojects = subprojects,
+    fixtures = fixtures,
     topLevelBuildScript = topLevelBuildScript,
     dryRun = dryRun
 )
+
+data class Fixture(
+    val path: String,
+    val pluginConfigs: String? = null
+) {
+    val subproject: File = File(path)
+}
 
 class FixtureRunner(
     private val gradleRunner: GradleRunner,
     private val rootProject: TemporaryFolder,
     topLevelBuildScript: String,
-    private val subprojects: List<File>,
+    private val fixtures: List<Fixture>,
     private val dryRun: Boolean
 ) {
     init {
-        // copy all subprojects into the root project
-        subprojects.forEach {
-            it.copyRecursively(File(rootProject.root, it.name), overwrite = true)
+        fixtures.forEach {
+            // copy all subprojects into the root project
+            it.subproject.copyRecursively(File(rootProject.root, it.subproject.name), overwrite = true)
+
+            // apply plugin configs if available
+            it.pluginConfigs?.run {
+                File(rootProject.root, "${it.subproject.name}/build.gradle").appendText("\n$this\n")
+            }
         }
 
         // add build.gradle to root project
@@ -68,8 +80,8 @@ class FixtureRunner(
                 """.trimIndent()
             )
             appendText("\n")
-            subprojects.forEach {
-                appendText("include ':${it.name}'\n")
+            fixtures.forEach {
+                appendText("include ':${it.subproject.name}'\n")
             }
         }
     }
