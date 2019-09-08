@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 package reactivecircus.firestorm
 
 import com.android.build.gradle.api.ApplicationVariant

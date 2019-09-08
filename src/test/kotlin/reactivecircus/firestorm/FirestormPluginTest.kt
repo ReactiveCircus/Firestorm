@@ -27,7 +27,7 @@ class FirestormPluginTest {
         (appProject as DefaultProject).evaluate()
 
         assertAnalyzeGitChangesTaskRegistered(appProject)
-        assertTaskNotRegistered(appProject, "generateDummyApk")
+        assertGenerateDummyApkTaskNotRegistered(appProject)
 
         val assembleDebugApkPair = appProject.tasks.getByName("assembleDebugApkPair")
         assertThat(assembleDebugApkPair.group).isEqualTo(FIRESTORM_TASK_GROUP)
@@ -52,7 +52,7 @@ class FirestormPluginTest {
         (appProject as DefaultProject).evaluate()
 
         assertAnalyzeGitChangesTaskRegistered(appProject)
-        assertTaskNotRegistered(appProject, "generateDummyApk")
+        assertGenerateDummyApkTaskNotRegistered(appProject)
 
         val assembleMockDebugApkPair = appProject.tasks.getByName("assembleMockDebugApkPair")
         assertThat(assembleMockDebugApkPair.group).isEqualTo(FIRESTORM_TASK_GROUP)
@@ -226,9 +226,9 @@ class FirestormPluginTest {
         assertThat(generateDummyApk.description).isEqualTo("Generates a dummy APK for running Android Library tests on Firebase Test Lab.")
     }
 
-    private fun assertTaskNotRegistered(project: Project, taskName: String) {
+    private fun assertGenerateDummyApkTaskNotRegistered(project: Project) {
         assertThrows(UnknownTaskException::class.java) {
-            project.tasks.getByName(taskName)
+            project.tasks.getByName("generateDummyApk")
         }
     }
 }
