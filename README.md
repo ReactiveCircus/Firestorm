@@ -88,7 +88,7 @@ Available plugin configurations and default values:
 ```groovy
 plugins {
     id 'com.android.application'
-    id 'io.github.reactivecircus.firestorm' version "$firestormVersion"
+    id 'io.github.reactivecircus.firestorm'
 }
 
 firestorm {

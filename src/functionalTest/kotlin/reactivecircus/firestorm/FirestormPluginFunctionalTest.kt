@@ -81,7 +81,7 @@ class FirestormPluginFunctionalTest {
         ).runAndCheckResult(
             "tasks", "--group=firestorm"
         ) {
-            assertThat(output).doesNotContain("Firestorm firestorm")
+            assertThat(output).doesNotContain("Firestorm tasks")
             assertThat(output).contains("No tasks")
             assertThat(output).contains("Firestorm plugin is disabled.")
         }
