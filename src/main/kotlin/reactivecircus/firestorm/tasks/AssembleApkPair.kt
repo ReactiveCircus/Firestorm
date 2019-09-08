@@ -25,7 +25,7 @@ abstract class AssembleApkPair : DefaultTask() {
 
     @get:Input
     @get:Optional
-    abstract val shouldSkip: Property<Boolean>
+    abstract val shouldRun: Property<Boolean>
 
     @get:InputFile
     @get:Classpath
@@ -43,7 +43,7 @@ abstract class AssembleApkPair : DefaultTask() {
 
     init {
         onlyIf {
-            !shouldSkip.getOrElse(false)
+            shouldRun.getOrElse(true)
         }
     }
 

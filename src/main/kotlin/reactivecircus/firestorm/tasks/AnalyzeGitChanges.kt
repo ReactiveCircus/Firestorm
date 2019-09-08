@@ -35,14 +35,12 @@ abstract class AnalyzeGitChanges : DefaultTask() {
     /**
      * Returns a Provider<Boolean> indicating whether the project has meaningful git changes.
      */
-    fun sourceChanged(): Provider<Boolean> {
-        return result.map { regularFile ->
-            with(regularFile.asFile) {
-                if (exists()) {
-                    readText().trim().equals(false.toString(), ignoreCase = true)
-                } else {
-                    false
-                }
+    fun changeDetected(): Provider<Boolean> = result.map {
+        with(it.asFile) {
+            if (exists()) {
+                readText().trim().equals(true.toString(), ignoreCase = true)
+            } else {
+                true
             }
         }
     }

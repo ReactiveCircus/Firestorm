@@ -82,7 +82,7 @@ class FirestormPlugin : Plugin<Project> {
                 task.inputAppApk.set(appApkProvider)
                 task.inputTestApk.set(testApkProvider)
                 if (extension.smartTrigger) {
-                    task.shouldSkip.set(analyzeGitChanges!!.flatMap { it.sourceChanged() })
+                    task.shouldRun.set(analyzeGitChanges!!.flatMap { it.changeDetected() })
                 }
                 task.outputAppApk.set(
                     File(
