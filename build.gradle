@@ -32,6 +32,10 @@ pluginBundle {
     website = POM_URL
     vcsUrl = POM_SCM_URL
     tags = ['gradle', 'android', 'firebase-test-lab', 'testing']
+    mavenCoordinates {
+        groupId = GROUP
+        artifactId = POM_ARTIFACT_ID
+    }
 }
 
 gradlePlugin {
