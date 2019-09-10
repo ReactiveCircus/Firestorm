@@ -12,7 +12,7 @@ The **Firestorm Gradle Plugin** is available from both **Maven Central** and **G
 
 ```groovy
 buildscript {
-    ext.firestormVersion = '0.1.0'
+    ext.firestormVersion = '0.1.1'
     
     repositories {
         mavenCentral()
