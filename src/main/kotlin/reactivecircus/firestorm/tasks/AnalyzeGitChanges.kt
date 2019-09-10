@@ -18,7 +18,7 @@ import org.gradle.api.tasks.TaskAction
 @CacheableTask
 abstract class AnalyzeGitChanges : DefaultTask() {
 
-    // TODO add git commit hash as input?
+    // TODO add project-commit-hash.diff file as input? (from GenerateGitDiffs task)
 
     @get:Input
     abstract val includes: SetProperty<String>
