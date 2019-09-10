@@ -74,7 +74,7 @@ dependencies {
     testImplementation "com.google.truth:truth:$truthVersion"
     testImplementation "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     testImplementation "com.android.tools.build:gradle:$androidGradlePluginVersion"
-    
+
     fixtureClasspath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     fixtureClasspath "com.android.tools.build:gradle:$androidGradlePluginVersion"
 }
