@@ -1,0 +1,33 @@
+name: Build and Test
+
+on:
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  assemble:
+    name: Assemble
+    runs-on: ubuntu-latest
+    container:
+      image: reactivecircus/android-sdk:latest
+      env:
+        JAVA_TOOL_OPTIONS: -Xmx2g
+        GRADLE_OPTS: -Dkotlin.incremental=false
+    steps:
+    - uses: actions/checkout@v1
+    - name: Assemble Artifacts
+      run: ./gradlew assemble
+      
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    container:
+      image: reactivecircus/android-sdk:latest
+      env:
+        JAVA_TOOL_OPTIONS: -Xmx2g
+        GRADLE_OPTS: -Dkotlin.incremental=false
+    steps:
+    - uses: actions/checkout@v1
+    - name: Run Checks (test, detekt and lint)
+      run: ./gradlew check
