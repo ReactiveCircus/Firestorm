@@ -1,0 +1,54 @@
+name: Build, Test and Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  assemble:
+    name: Assemble
+    runs-on: ubuntu-latest
+    container:
+      image: reactivecircus/android-sdk:latest
+      env:
+        JAVA_TOOL_OPTIONS: -Xmx4g
+        GRADLE_OPTS: -Dkotlin.incremental=false
+    steps:
+    - uses: actions/checkout@v1
+    - name: Assemble Artifacts
+      run: ./gradlew assemble
+      
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    container:
+      image: reactivecircus/android-sdk:latest
+      env:
+        JAVA_TOOL_OPTIONS: -Xmx4g
+        GRADLE_OPTS: -Dkotlin.incremental=false
+    steps:
+    - uses: actions/checkout@v1
+    - name: Run Checks (test, detekt and lint)
+      run: ./gradlew check
+
+  publish-artifacts:
+    needs: [assemble, check]
+    name: Publish Artifacts
+    runs-on: ubuntu-latest
+    container:
+      image: reactivecircus/android-sdk:latest
+      env:
+        JAVA_TOOL_OPTIONS: -Xmx4g
+        GRADLE_OPTS: -Dkotlin.incremental=false
+    steps:
+      - uses: actions/checkout@v1
+      - name: Export Sonatype Credentials
+        env:
+          SONATYPE_NEXUS_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
+          SONATYPE_NEXUS_PASSWORD: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
+        run: |
+          echo "SONATYPE_NEXUS_USERNAME=${SONATYPE_NEXUS_USERNAME}" >> gradle.properties
+          echo "SONATYPE_NEXUS_PASSWORD=${SONATYPE_NEXUS_PASSWORD}" >> gradle.properties
+      - name: Deploy Snapshot
+        run: .buildscript/deploy_snapshot.sh
