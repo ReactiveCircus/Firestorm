@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 package reactivecircus.firestorm
 
 import com.android.build.gradle.api.ApplicationVariant
@@ -46,6 +44,7 @@ class FirestormPlugin : Plugin<Project> {
         }
     }
 
+    @Suppress("UnstableApiUsage")
     private fun registerTasks(
         project: Project,
         extension: FirestormExtension,

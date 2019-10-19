@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 package reactivecircus.firestorm.tasks
 
 import org.gradle.api.DefaultTask
