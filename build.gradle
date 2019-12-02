@@ -97,10 +97,8 @@ tasks.withType(Test).configureEach {
     }
 }
 
-if (!isCiBuild) {
-    dependencies {
-        detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion"
-    }
+dependencies {
+    detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion"
 }
 
 detekt {
