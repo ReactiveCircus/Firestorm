@@ -1,5 +1,6 @@
 package reactivecircus.firestorm
 
+import org.gradle.api.Action
 import org.gradle.api.Project
 import java.io.File
 
@@ -8,10 +9,10 @@ fun Project.createAndroidAppProject(hasProductFlavor: Boolean) {
         compileSdkVersion(29)
         if (hasProductFlavor) {
             flavorDimensions("environment")
-            productFlavors {
+            productFlavors(Action {
                 it.create("mock")
                 it.create("prod")
-            }
+            })
         }
     }
 
@@ -26,10 +27,10 @@ fun Project.createAndroidLibraryProject(hasProductFlavor: Boolean) {
         compileSdkVersion(29)
         if (hasProductFlavor) {
             flavorDimensions("environment")
-            productFlavors {
+            productFlavors(Action {
                 it.create("mock")
                 it.create("prod")
-            }
+            })
         }
     }
 
