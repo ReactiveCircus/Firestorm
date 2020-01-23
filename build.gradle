@@ -2,7 +2,7 @@ buildscript {
     ext.isCiBuild = System.getenv("CI") == "true"
 
     ext.kotlinVersion = '1.3.61'
-    ext.detektVersion = '1.3.1'
+    ext.detektVersion = '1.4.0'
     ext.pluginPublishingPluginVersion = '0.10.1'
     ext.mavenPublishPluginVersion = '0.8.0'
     ext.androidGradlePluginVersion = '4.0.0-alpha09'
