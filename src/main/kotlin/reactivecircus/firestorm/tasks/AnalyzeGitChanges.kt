@@ -34,13 +34,7 @@ abstract class AnalyzeGitChanges : DefaultTask() {
      * Returns a Provider<Boolean> indicating whether the project has meaningful git changes.
      */
     fun changeDetected(): Provider<Boolean> = result.map {
-        with(it.asFile) {
-            if (exists()) {
-                readText().trim().equals(true.toString(), ignoreCase = true)
-            } else {
-                true
-            }
-        }
+        it.asFile.readText().trim().equals(true.toString(), ignoreCase = true)
     }
 
     // TODO figure out how to make task cacheable and avoid IO / computation in configuration phase
