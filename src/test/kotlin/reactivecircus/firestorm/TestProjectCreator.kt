@@ -6,7 +6,7 @@ import java.io.File
 
 fun Project.createAndroidAppProject(hasProductFlavor: Boolean) {
     appExtension.apply {
-        compileSdkVersion(29)
+        compileSdkVersion(30)
         if (hasProductFlavor) {
             flavorDimensions("environment")
             productFlavors(Action {
@@ -24,7 +24,7 @@ fun Project.createAndroidAppProject(hasProductFlavor: Boolean) {
 
 fun Project.createAndroidLibraryProject(hasProductFlavor: Boolean) {
     libraryExtension.apply {
-        compileSdkVersion(29)
+        compileSdkVersion(30)
         if (hasProductFlavor) {
             flavorDimensions("environment")
             productFlavors(Action {
