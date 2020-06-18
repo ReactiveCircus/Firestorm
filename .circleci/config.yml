@@ -67,6 +67,6 @@ workflows:
       - publish_artifacts:
           filters:
             branches:
-              only: master
+              only: main
           requires:
             - build_and_test
