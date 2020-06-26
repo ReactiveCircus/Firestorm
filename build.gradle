@@ -5,7 +5,7 @@ buildscript {
     ext.detektVersion = '1.9.1'
     ext.pluginPublishingPluginVersion = '0.11.0'
     ext.mavenPublishPluginVersion = '0.11.1'
-    ext.androidGradlePluginVersion = '4.1.0-beta01'
+    ext.androidGradlePluginVersion = '4.1.0-beta02'
     ext.junitVersion = '4.13'
     ext.truthVersion = '1.0.1'
 }
