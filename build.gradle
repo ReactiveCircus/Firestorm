@@ -4,8 +4,8 @@ buildscript {
     ext.kotlinVersion = '1.3.72'
     ext.detektVersion = '1.10.0'
     ext.pluginPublishingPluginVersion = '0.11.0'
-    ext.mavenPublishPluginVersion = '0.11.1'
-    ext.androidGradlePluginVersion = '4.1.0-beta02'
+    ext.mavenPublishPluginVersion = '0.12.0'
+    ext.androidGradlePluginVersion = '4.1.0-beta03'
     ext.junitVersion = '4.13'
     ext.truthVersion = '1.0.1'
 }
