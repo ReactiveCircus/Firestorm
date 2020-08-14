@@ -1,7 +1,7 @@
 buildscript {
     ext.isCiBuild = System.getenv("CI") == "true"
 
-    ext.kotlinVersion = '1.4.0-rc'
+    ext.kotlinVersion = '1.4.0'
     ext.detektVersion = '1.11.0'
     ext.pluginPublishingPluginVersion = '0.12.0'
     ext.mavenPublishPluginVersion = '0.12.0'
