@@ -9,10 +9,10 @@ fun Project.createAndroidAppProject(hasProductFlavor: Boolean) {
         compileSdkVersion(30)
         if (hasProductFlavor) {
             flavorDimensions("environment")
-            productFlavors(Action {
+            productFlavors {
                 it.create("mock")
                 it.create("prod")
-            })
+            }
         }
     }
 
@@ -27,10 +27,12 @@ fun Project.createAndroidLibraryProject(hasProductFlavor: Boolean) {
         compileSdkVersion(30)
         if (hasProductFlavor) {
             flavorDimensions("environment")
-            productFlavors(Action {
-                it.create("mock")
-                it.create("prod")
-            })
+            productFlavors(
+                Action {
+                    it.create("mock")
+                    it.create("prod")
+                }
+            )
         }
     }
 

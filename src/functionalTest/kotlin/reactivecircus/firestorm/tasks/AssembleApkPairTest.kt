@@ -99,7 +99,8 @@ class AssembleApkPairTest {
             rootProject = testProjectRoot,
             fixtures = listOf(appProjectWithFlavors, libraryProjectWithoutFlavors1, libraryProjectWithoutFlavors2)
         ).runAndCheckResult(
-            "assembleMockDebugApkPair", "assembleDebugApkPair"
+            "assembleMockDebugApkPair",
+            "assembleDebugApkPair"
         ) {
             assertThat(task(":application-with-flavors:analyzeGitChanges")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)
@@ -335,14 +336,17 @@ class AssembleApkPairTest {
         )
 
         runner.runAndCheckResult(
-            "assembleDebugApkPair", "--build-cache"
+            "assembleDebugApkPair",
+            "--build-cache"
         ) {
             assertThat(task(":library-no-flavor-1:assembleDebugApkPair")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)
         }
 
         runner.runAndCheckResult(
-            "clean", "assembleDebugApkPair", "--build-cache"
+            "clean",
+            "assembleDebugApkPair",
+            "--build-cache"
         ) {
             assertThat(task(":clean")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)

@@ -74,7 +74,8 @@ class FirestormPlugin : Plugin<Project> {
                 .flatMap { it.toApkFileProvider() }
 
             val assembleApkPair = project.tasks.register(
-                "assemble${testedVariantName.capitalize()}ApkPair", AssembleApkPair::class.java
+                "assemble${testedVariantName.capitalize()}ApkPair",
+                AssembleApkPair::class.java
             ) { task ->
                 task.group = FIRESTORM_TASK_GROUP
                 task.description = "Assembles app and test APKs for $testedVariantName."
@@ -97,7 +98,8 @@ class FirestormPlugin : Plugin<Project> {
             }
 
             project.tasks.register(
-                "run${testedVariantName.capitalize()}TestsOnFirebaseTestLab", RunTestsOnFirebaseTestLab::class.java
+                "run${testedVariantName.capitalize()}TestsOnFirebaseTestLab",
+                RunTestsOnFirebaseTestLab::class.java
             ) { task ->
                 task.group = FIRESTORM_TASK_GROUP
                 task.description = "Runs tests for $testedVariantName on Firebase Test Lab."
@@ -112,7 +114,8 @@ class FirestormPlugin : Plugin<Project> {
         extension: FirestormExtension
     ): TaskProvider<AnalyzeGitChanges> {
         return project.tasks.register(
-            "analyzeGitChanges", AnalyzeGitChanges::class.java
+            "analyzeGitChanges",
+            AnalyzeGitChanges::class.java
         ) {
             it.group = FIRESTORM_TASK_GROUP
             it.description = "Checks if project source has meaningful git changes."

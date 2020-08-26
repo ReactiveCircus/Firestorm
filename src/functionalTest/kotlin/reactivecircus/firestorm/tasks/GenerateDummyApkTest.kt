@@ -65,14 +65,17 @@ class GenerateDummyApkTest {
         )
 
         runner.runAndCheckResult(
-            "generateDummyApk", "--build-cache"
+            "generateDummyApk",
+            "--build-cache"
         ) {
             assertThat(task(":generateDummyApk")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)
         }
 
         runner.runAndCheckResult(
-            "clean", "generateDummyApk", "--build-cache"
+            "clean",
+            "generateDummyApk",
+            "--build-cache"
         ) {
             assertThat(task(":clean")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)

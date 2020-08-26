@@ -59,7 +59,8 @@ class FirestormPluginFunctionalTest {
             rootProject = testProjectRoot,
             fixtures = listOf(appProjectWithoutFlavor)
         ).runAndCheckResult(
-            "tasks", "--group=firestorm"
+            "tasks",
+            "--group=firestorm"
         ) {
             assertThat(output).contains("Firestorm tasks")
         }
@@ -79,7 +80,8 @@ class FirestormPluginFunctionalTest {
             rootProject = testProjectRoot,
             fixtures = listOf(appProjectWithoutFlavor)
         ).runAndCheckResult(
-            "tasks", "--group=firestorm"
+            "tasks",
+            "--group=firestorm"
         ) {
             assertThat(output).doesNotContain("Firestorm tasks")
             assertThat(output).contains("No tasks")
