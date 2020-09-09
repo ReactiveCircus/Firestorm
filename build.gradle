@@ -2,6 +2,7 @@ buildscript {
     ext.isCiBuild = System.getenv("CI") == "true"
 
     ext.kotlinVersion = '1.4.0'
+    ext.dokkaVersion = '1.4.0'
     ext.detektVersion = '1.12.0'
     ext.pluginPublishingPluginVersion = '0.12.0'
     ext.mavenPublishPluginVersion = '0.13.0'
@@ -14,6 +15,7 @@ plugins {
     id 'java-gradle-plugin'
     id 'com.gradle.plugin-publish' version "$pluginPublishingPluginVersion"
     id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion"
+    id 'org.jetbrains.dokka' version "$dokkaVersion"
     id 'io.gitlab.arturbosch.detekt' version "$detektVersion"
     id 'com.vanniktech.maven.publish' version "$mavenPublishPluginVersion"
 }
